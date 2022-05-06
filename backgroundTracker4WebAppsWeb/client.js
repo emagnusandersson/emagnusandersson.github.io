@@ -787,8 +787,7 @@ var viewSettingCreator=function(){
 <p><b>Block-level:</b> The app will settle with block-level (wifi) accuracy. If Wifi-networks aren't found then GPS is used.</p>
 <p><b>GPS:</b> The app won't settle with anything but the best (GPS if available). Note! resolving to GPS requires relatively much power.</p>`;
   var imgH=imgHelp.cloneNode(1).css({'margin-right':'auto'});   popupHover(imgH, createElement('div').myHtml(strHelp), 30);
-  //var aInfo=createElement('a').prop({href:'https://info.closeby.market/backgroundLocationBroadcasterWeb_settings'}).myText('more info').css({'margin-left':'0.4em', 'margin-right':'auto'});
-  
+
   el.selAccuracy=createElement('select');//.on('change', function(){ if(boNativeAndroid) Android.setAccuracy(Number(this.value)); else setItems();});
   var pAccuracy=createElement('p').myAppend(langHtml.Accuracy, imgH, el.selAccuracy);
   
