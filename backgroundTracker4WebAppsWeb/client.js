@@ -104,7 +104,8 @@ var divMessageTextCreate=function(){
 
 var viewTableCreator=function(){
   var el=createElement('div');
-  if(boTouch){  var strMoveEv='touchmove', strEndEv='touchend'; }  else{   var strMoveEv='mousemove', strEndEv='mouseup';    }
+  if(boTouch){  var strStartEv='touchstart', strMoveEv='touchmove', strEndEv='touchend'; }
+  else{   var strStartEv='mousedown', strMoveEv='mousemove', strEndEv='mouseup';    }
   var iStart, iEnd;
   var myMousedown= function(e){
     var e = e || window.event; if(e.which==3) return;
@@ -121,7 +122,7 @@ var viewTableCreator=function(){
     document.off(strMoveEv,myMousemove); document.off(strEndEv,el.myMouseup);
     //setMess(print_r(el.myGet(), 1));
     iEnd=movedRow.myIndex();
-    Row=el.Row=[...divCont.children];
+    //Row=el.Row=[...divCont.children];
     if(boNativeAndroid) Android.moveRow(iStart,iEnd); else setItems();
   }
   
@@ -130,30 +131,32 @@ var viewTableCreator=function(){
     var x,y;
     if(boTouch) {e.preventDefault(); e.stopPropagation(); x=e.changedTouches[0].pageX; y=e.changedTouches[0].pageY;}
     else {y=e.clientY;}
-
-    //var iCur=getNodeIndex(movedRow);
+    
     var iCur=movedRow.myIndex();
     var hCur=movedRow.offsetHeight, yMouseOff=y-hCur/2;
 
-    var len=Row.length;
+    var len=divCont.children.length;
+    var boMoved=false
 
     if(iCur>0) {  //Check if previous is better
-      var tmp=movedRow.previousElementSibling;
-      var yPrevOff=tmp.getBoundingClientRect().top;
-      var hPrev=tmp.offsetHeight;
-      if(y<yPrevOff+hPrev/2) { tmp.insertAdjacentElement('beforebegin', movedRow); }
+      var rowT=movedRow.previousElementSibling;
+      var yPrevOff=rowT.getBoundingClientRect().top;
+      var hPrev=rowT.offsetHeight;
+      if(y<yPrevOff+hPrev/2) { rowT.insertAdjacentElement('beforebegin', movedRow); boMoved=true }
     }
-    if(iCur<len-1) { //Check if next is better
-      var tmp=movedRow.nextElementSibling;
-      var yNextOff=tmp.getBoundingClientRect().top;
-      var hNext=tmp.offsetHeight;
-      if(y>yNextOff+hNext/2) { tmp.insertAdjacentElement('afterend', movedRow); }
+    if(!boMoved && iCur<len-1) { //Check if next is better
+      var rowT=movedRow.nextElementSibling;
+      var yNextOff=rowT.getBoundingClientRect().top;
+      var hNext=rowT.offsetHeight;
+      if(y>yNextOff+hNext/2) { rowT.insertAdjacentElement('afterend', movedRow); }
     }
-    var yCurOff=movedRow.offsetTop;
-    movedRow.css({'transform':'translateY('+(yMouseOff-yCurOff)+'px)'});
+    var yCurOff=movedRow.getBoundingClientRect().top
+    var strYTrans=movedRow.style.transform; strYTrans=strYTrans.slice(11,-3); var yTrans=Number(strYTrans)
+    var yCurOrgOff=yCurOff-yTrans
+    movedRow.css({'transform':'translateY('+(yMouseOff-yCurOrgOff)+'px)'});
   };
 
-  el.setUp=function(arrURI){    Row.forEach(ele=>ele.remove());    el.myAdd(arrURI);  } 
+  el.setUp=function(arrURI){   var Row=[...divCont.children]; Row.forEach(ele=>ele.remove());    el.myAdd(arrURI);  } 
   //el.myGet=function(arrO=[]){  arrO.length=0;    Row.forEach(function(ele,i){arrO[i]=ele.attr("name");}); return arrO;   }
   var movedRow; 
   var colOn='#3d3', colOff='#aaa';
@@ -161,6 +164,7 @@ var viewTableCreator=function(){
   var cssSort={cursor:'pointer', padding:'0.6em 0.7em', width:'200px', margin:'2px 0px', 'background':'#aaa'};
   var cssNorm={cursor:'', padding:'', width:'', margin:'', 'background':''};
   el.setType=function(type){
+    var Row=[...divCont.children];
     Row.forEach(function(r,i){
       var spanDrag=r.querySelector('[name=spanDrag]'), cbEnable=r.querySelector('[name=cbEnable]'), spanUri=r.querySelector('[name=spanUri]'), buttConnect=r.querySelector('[name=buttonConnect]'), spanMess=r.querySelector('[name=spanMess]'), spanEdit=r.querySelector('[name=spanEdit]');  //spanRole=r.querySelector('[name=spanRole]')
       var aLink=r.querySelector('[name=aLink]'); //spanSafariFix=r.querySelector('[name=spanSafariFix]');
@@ -181,9 +185,9 @@ var viewTableCreator=function(){
       var persistData=arrURI[i], {uri, boEnable, strUUID, iRole}=persistData;
       var row=createElement('div').prop('persistData', persistData).css({overflow:'hidden'});
       row.css(cssNorm).css({'word-break':'break-all'}); //
-      Row.push(row);
+      //Row.push(row);
       var spanDrag=createElement('span').attr('name', 'spanDrag').myText('⣿').css({ 'float':'left', 'font-size':'1.8em', 'color':'gray', 'cursor':'pointer', 'text-align':'center', 'width':'1.3em', display:'inline-block'}); //.addClass('unselectable').prop({UNSELECTABLE:"on"});
-        if(boTouch) spanDrag.on('touchstart', myMousedown); else spanDrag.on('mousedown', myMousedown);
+      spanDrag.on(strStartEv, myMousedown);
       var cbEnable=createElement('input').attr('name', 'cbEnable').prop({type:'checkbox', checked:boEnable}).css({ 'float':'left', width:'2.4em', height:'2.4em'}).on('click',cbEnableClick);
       //if(boFF || boOpera){ cbEnable.css({'transform':'scale(2,2)'}); }
       //else if((boAndroid && !boChrome)) cbEnable.css({'-webkit-transform':'scale(2,2)', width:'', height:''}); 
@@ -214,14 +218,14 @@ var viewTableCreator=function(){
   el.myRemove=function(r){
     var iRow=r.myIndex();
     r.remove();
-    Row=el.Row=[...divCont.children];
+    //Row=el.Row=[...divCont.children];
     //spanLock.visibilityToggle(Boolean(Row.length));
     if(boNativeAndroid) Android.deleteRow(iRow); else setItems();
   }
   
     // getRowByURI: used by contains.
   el.getRowByURI=function(uri){
-    var r=null;
+    var r=null, Row=[...divCont.children];
     Row.forEach(function(ele, i){ if(ele.persistData.uri==uri) r=ele; })
     return r;
   }
@@ -240,6 +244,7 @@ var viewTableCreator=function(){
     if(boNativeAndroid) Android.toggleRow(iRow,boEnable); else setItems();
   }
   el.setAllMess=function(strMess){
+    var Row=[...divCont.children];
     Row.forEach(function(ele, i){ ele.querySelector('[name=spanMess]').myText(strMess).css({'color':''}); })
   }
   el.setMess=function(iRow, strMess){
@@ -248,18 +253,18 @@ var viewTableCreator=function(){
       if(strMess.substr(0,7)=='Visible') strCol='#3d3';
       else if(strMess.substr(0,6)=='Hidden') strCol='red';
     }
-    var r=Row[iRow];
+    var Row=[...divCont.children], r=Row[iRow];
     r.querySelector('[name=spanMess]').myText(strMess).css({'color':strCol});
   }
   el.getData=function(){
-    var MTab=[];
+    var MTab=[], Row=[...divCont.children];
     Row.forEach(function(ele, i){
       var boEnable=ele.querySelector('[name=cbEnable]').prop('checked');
       MTab.push(ele.persistData);
     });
     return MTab;
   }
-  el.getNRow=function(){return Row.length;}
+  el.getNRow=function(){return divCont.children.length;}
   
       //
       // Used in webapp only
@@ -279,6 +284,7 @@ var viewTableCreator=function(){
   el.sendAllOff=function(){  sendAllMess({boShow:false});  }
   el.sendAllCheck=function(){  sendAllMess({boCheck:true});  }
   var sendAllMess=function(objMess){
+    var Row=[...divCont.children]
     Row.forEach(function(r, i){
       var boEnable=r.querySelector('[name=cbEnable]').prop('checked');
       if(boEnable) sendMess(r, objMess);
@@ -334,7 +340,7 @@ var viewTableCreator=function(){
   var divKeyVoidW=createElement('div').myAppend(divKeyShadow,divKeyVoid).css({ position:'relative'});
   var divKey=createElement('div').myText('🔑').css({'text-shadow':'-1px 0 black', color:'transparent', left: '1px', top:'0px'});
   //elBody.append(divKeyVoidW, divKey);
-  var Row=el.Row=[];
+  //var Row=el.Row=[];
     
     // Head
   var spanEnabled=createElement('span').myText(langHtml.Enabled).css({'font-weight':'bold'});
@@ -345,7 +351,7 @@ var viewTableCreator=function(){
 
 
 
-  var divCont=createElement('div'); 
+  var divCont=el.divCont=createElement('div'); 
   //var tmp='button[name=buttonConnect]';   divCont.on('click', tmp, buttonConnectClick); 
   //var tmp='input[name=cbEnable]';   divCont.on('click', tmp, cbEnableClick); 
  
@@ -625,7 +631,8 @@ var viewFrontCreator=function(){
     //viewTable.Row.forEach(ele=>ele.querySelector('[name=cbEnable]').prop("disabled", boShow));
     //viewTable.Row.forEach(ele=>ele.querySelector('[name=buttonEdit]').prop("disabled", boShow));
     //viewTable.Row.forEach(ele=>ele.querySelector('[name=buttonDelete]').prop("disabled", boShow));
-    viewTable.Row.forEach(ele=>{
+    var Row=[...viewTable.divCont.children]
+    Row.forEach(ele=>{
       ele.querySelector('[name=buttonConnect]').prop("disabled", boShow).css({opacity:boShow?0.4:1});
     });  //; .toggle(!boShow))
     viewTable.imgHelpHead.toggle(!boShow);
@@ -673,8 +680,9 @@ var viewFrontCreator=function(){
     timerVar=clearTimeout(timerVar); el.startNewTic(tDiff); 
   }
   var buttOn=createElement('button').myText(langHtml.On).css({'margin-left':'0.9em', padding:'0.3em'}).on('click', function(){  
-    if(viewTable.Row.length==0) { setMess('List is empty',5); return; }
-    var boAny=0; viewTable.Row.forEach(ele=>{if(ele.persistData.boEnable==1) {boAny=1; return;}});      if(boAny==0) { setMess('No enabled entries',5); return;}
+    var Row=[...viewTable.divCont.children]
+    if(Row.length==0) { setMess('List is empty',5); return; }
+    var boAny=0; Row.forEach(ele=>{if(ele.persistData.boEnable==1) {boAny=1; return;}});      if(boAny==0) { setMess('No enabled entries',5); return;}
     if(boNativeAndroid){
       var strRet=Android.startBGWork(); var {boFineOK, boBGOK}=JSON.parse(strRet);
       if(!boFineOK) { setMess('No location permission',5); return;}
@@ -995,8 +1003,8 @@ var flLockOpen=fleImageFolder+'lockopen.png';
 var flSetting=fleImageFolder+'setting1.png';
 var flRerun=fleImageFolder+'rerun.png';
 
-var uWiki='https://gavott.com/backgroundLocationBroadcasterWeb';
-var uListOfValidSites='https://gavott.com/backgroundLocationBroadcaster_ListOfValidSites';
+var uWiki='https://gavott.com/backgroundTracker4WebApps';
+var uListOfValidSites='https://gavott.com/backgroundTracker4WebApps_ListOfValidSites';
 
 var colGray='#eee';
 

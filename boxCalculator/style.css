@@ -1,0 +1,35 @@
+
+/* @media (prefers-color-scheme:light) */ 
+:root {
+  --font-color: #000;
+  --link-color:#1C75B9;
+  --link-white-color:#fff;
+  --bg-color: rgb(243,243,243);
+  --bg-alt: rgb(133, 190, 255);
+  --bg-colorEmp:#ccc;
+  --bg-colorEmp2:#a0a0a0;
+  --invert:0;
+}
+
+
+/*  */
+/* .classDark */
+
+/* @media (prefers-color-scheme:dark) */
+[data-theme="dark"]{
+  --font-color: #c1bfbd;
+  --link-color:#0a86da;
+  --link-white-color:#c1bfbd;
+  --bg-color: #333;
+  --bg-alt: rgb(165, 0, 0);
+  --bg-colorEmp:#555; /*Emp=emphasis*/
+  --bg-colorEmp2:#606060;
+  --invert:1;
+}
+
+:root {
+  color-scheme:light dark;
+}
+
+.invertOnDark {filter:invert(var(--invert))}
+.invertOnDarkBright {filter:invert(var(--invert)) brightness(calc(1 + var(--invert) * 0.4))}
