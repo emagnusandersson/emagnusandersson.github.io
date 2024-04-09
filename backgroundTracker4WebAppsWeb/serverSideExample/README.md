@@ -1,5 +1,5 @@
-Server side example for [backgroundLocationBroadcaster](https://gavott.com/backgroundLocationBroadcaster) (native android app)
-[backgroundLocationBroadcasterWeb](https://emagnusandersson.github.io/backgroundLocationBroadcasterWeb) (same as above but as a (web version) 
+Server side example for [backgroundTracker4WebApps](https://gavott.com/backgroundTracker4WebApps) (native android app)
+[backgroundTracker4WebAppsWeb](https://emagnusandersson.github.io/backgroundTracker4WebAppsWeb) (same as above but as a (web version) 
 ================================
 How to run on localhost.
 
