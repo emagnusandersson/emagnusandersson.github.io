@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<meta name='viewport' content='initial-scale=1'/>
+<meta name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, interactive-widget=resizes-content'/>
 
 <script>
 "use strict"
@@ -82,19 +82,19 @@ var uRedir=dirname(window.location.href)+'loginBack.html'; // <--- I'm not sure 
 
   // When running on emagnusandersson.github.io
 var AppId={  fb:"1798140463801583",  google:"51886922011-uq8crduieu3ga87reh2v8q2m95097g2d.apps.googleusercontent.com",  idplace:"1"  };
-var uRedir='https://emagnusandersson.github.io/idplaceImplicitDemo/loginBack.html';
+var uRedir='https://emagnusandersson.github.io/OAuth2_ImplicitFlow_tester/loginBack.html';
 
 
   // Endpoints
 var UrlOAuth={
-  fb:"https://www.facebook.com/v13.0/dialog/oauth",
+  fb:"https://www.facebook.com/v20.0/dialog/oauth",
   google: "https://accounts.google.com/o/oauth2/v2/auth",
   idplace:"https://idplace.org",
   idL:"http://localhost:5000",  // <-- The following lines could/should be commented out (or removed)  (only for the developer of idplace)
   id192:"http://192.168.0.4:5000",  // <-- The following lines could/should be commented out (or removed) (only for the developer of idplace)
 };
 var UrlGraph={
-  fb:"https://graph.facebook.com/v13.0/me",
+  fb:"https://graph.facebook.com/v20.0/me",
   google: "https://www.googleapis.com/plus/v1/people/me",
   idplace:"https://idplace.org/me",
   idL:"http://localhost:5000/me",  // <-- The following lines could/should be commented out (or removed)  (only for the developer of idplace)
@@ -121,9 +121,22 @@ var setUp=function(){
     else if(IP=='google')    arrQ.push("scope=profile");
     else if(IP=='idplace' || IP=='idL' || IP=='id192')    arrQ.push("scope=name,image");
     var uPop=UrlOAuth[IP]+'?'+arrQ.join('&');
-    window.open(uPop, '_blank', 'width=580,height=400');
+    window.open(uPop, '_blank'); //, 'width=580,height=400'
 
-    var [strQS, strHash]=await new Promise(resolve=>{   window.loginReturn=(...arg)=>resolve(arg);    });
+    //var [strQS, strHash]=await new Promise(resolve=>{   window.loginReturn=(...arg)=>resolve(arg);    });
+
+    var strHash=await new Promise(resolve=>{
+      var cbStorageEv=function(ev){
+        window.removeEventListener("storage", cbStorageEv);
+        var data; try{ data=JSON.parse(ev.newValue); }catch(e){ setMess(e);  return; }
+        var {strQS,strHash}=data;
+        //var strHash=ev.newValue;
+        resolve(strHash)
+      }
+      window.addEventListener("storage", cbStorageEv);
+    });
+    localStorage.removeItem('strMyLoginReturn')
+
     var param=parseQS(strHash.substring(1));
     var tmp=JSON.stringify(param, null,2);   preParamAccessTokenReq.myText(tmp);
 
@@ -192,6 +205,6 @@ window.onload=function(){  setUp();};
 <body>
 <!--<p>Note! this test-app only works with browsers supporting <a href=https://kangax.github.io/compat-table/es6/>Generators</a></p>-->
 <!--<p>Remember: Check and fill in the "Fill in your data !!!!" section in the source-code (index.html)</p>-->
-<p>This demo-app will use the "Implicit flow" (of OAuth 2.0) to fetch the ID (some data) from some ID-providers.</p>
+<p>This (client-side-only-) app is for testing the "Implicit flow" of OAuth 2.0. That is to fetch the ID (some data) from some ID-providers (IdP).</p>
 <p>Privacy policy: The data sent back from the IdP will just be displayed below (nothing stored)</p>
 </body></html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- <link rel="stylesheet" href="style.css" type="text/css"> -->
+<script type="importmap">
+    {
+    "imports": {
+      "./libClient.js": "./libClient.js?v=123",
+      "./index.js": "./index.js?v=123"
+    }
+  }
+</script>
+
+<script type="module">
+
+// Start server with: 
+// python -m http.server 5000
+// or
+// http-server -p 5000
+// or
+// http-server -S -C server.cert -K server.key -p 5000 -c-1
+// then something like
+// https://192.168.0.7:5000/index.html
+
+// rsync -rtvzPi -e "ssh" --delete --exclude-from=/home/magnus/progJS/webDynamic/closebymarket/rsyncExclude.txt ~/progJS/0NT/client/20211117WriteCookie/ magnus@178.62.226.193:~/myStatic
+
+import * as libClient from "./libClient.js";
+import * as index from "./index.js";
+
+var key=Object.keys(libClient)
+var keyI=Object.keys(index)
+// input, select{-webkit-appearance: none;border-radius:1px; border: 1px solid red; padding:0; margin:0; box-sizing:border-box;}
+</script>
+
+
+
+<style>
+</style>
+</head>     
+
+<body>
+  <title>Carbord box cutting calculator</title>
+  <h1>Carbord box cutting calculator</h1>
+ 
+<script>
+</script>
+
+</body>
+</html>
