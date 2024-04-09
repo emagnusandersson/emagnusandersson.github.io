@@ -87,14 +87,14 @@ var uRedir='https://emagnusandersson.github.io/idplaceImplicitDemo/loginBack.htm
 
   // Endpoints
 var UrlOAuth={
-  fb:"https://www.facebook.com/v11.0/dialog/oauth",
+  fb:"https://www.facebook.com/v13.0/dialog/oauth",
   google: "https://accounts.google.com/o/oauth2/v2/auth",
   idplace:"https://idplace.org",
   idL:"http://localhost:5000",  // <-- The following lines could/should be commented out (or removed)  (only for the developer of idplace)
   id192:"http://192.168.0.4:5000",  // <-- The following lines could/should be commented out (or removed) (only for the developer of idplace)
 };
 var UrlGraph={
-  fb:"https://graph.facebook.com/v11.0/me",
+  fb:"https://graph.facebook.com/v13.0/me",
   google: "https://www.googleapis.com/plus/v1/people/me",
   idplace:"https://idplace.org/me",
   idL:"http://localhost:5000/me",  // <-- The following lines could/should be commented out (or removed)  (only for the developer of idplace)
@@ -193,5 +193,5 @@ window.onload=function(){  setUp();};
 <!--<p>Note! this test-app only works with browsers supporting <a href=https://kangax.github.io/compat-table/es6/>Generators</a></p>-->
 <!--<p>Remember: Check and fill in the "Fill in your data !!!!" section in the source-code (index.html)</p>-->
 <p>This demo-app will use the "Implicit flow" (of OAuth 2.0) to fetch the ID (some data) from some ID-providers.</p>
-<p>Privacy policy: The data sent back from the IdP will just be displayed to you (nothing stored)</p>
+<p>Privacy policy: The data sent back from the IdP will just be displayed below (nothing stored)</p>
 </body></html>
